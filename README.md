@@ -3,7 +3,7 @@
 Die Idee ist, pydown auf einem Server immer im Hintergrund laufen zu lassen. In bestimmten Intervallen überprüft pydown in Konfigurationsdateien definierte Seiten und läd, wenn es neue Dateien die z.B. einem bestimmten Regrulären Ausdruck genügen, diese Dateien in einen definierten Ordner. 
 Somit soll insbesondere der Übungsaufgabenblatt Download automatisiert werden.
 ## Aufbau ##
-pydown besteht aus mehreren Teilen. Das Hauptprogramm parst [Siehe](http://www.duden.de/rechtschreibung/parsen) die Konfigurationsdateien und initiiert die Downloads etc. 
+pydown besteht aus mehreren Teilen. Das Hauptprogramm parst [(siehe)](http://www.duden.de/rechtschreibung/parsen) die Konfigurationsdateien und initiiert die Downloads etc. 
 Zudem gibt es eine einfache Möglichkeit zum Loggen der Ereignisse, für das Ilias sowie die ExPhysSeite und die Ana Seite (möglicherweise auch Mediendownload) Downloader. 
 ## Licence ##
 -
