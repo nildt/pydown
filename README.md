@@ -1,4 +1,4 @@
-# pydown # 
+#pydown#
 ## Idee ##
 Die Idee ist, pydown auf einem Server immer im Hintergrund laufen zu lassen. In bestimmten Intervallen überprüft pydown in Konfigurationsdateien definierte Seiten und läd, wenn es neue Dateien die z.B. einem bestimmten Regrulären Ausdruck genügen, diese Dateien in einen definierten Ordner. 
 Somit soll insbesondere der Übungsaufgabenblatt Download automatisiert werden.
