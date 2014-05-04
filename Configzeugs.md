@@ -8,3 +8,18 @@ https://wiki.python.org/moin/ConfigParserExamples
 * Unter Umständen der Name, unter dem das Heruntergeladene gespeichert werden soll, mit einer Zählvariable oder so 
 * Andere Einstellungen...?
 * Vielleicht einige Programm Einstellungen, z.B. ob DebugMeldungen ausgegeben werden sollen etc.
+
+Bsp:
+
+	[Blub]
+	url     = url.bei/der/nach/neuen_dateien/gesucht/werden/soll
+	regex   = downloads/regex[0-9]*\.pdf
+	
+	#Optional:
+	outDir  = output/direcory/
+	
+	login   = meinName
+	pssw    = passw234
+	#askAuth sorgt dafür, dass login und pssw mit einer Consoleneingabe überschieben werden
+	askAuth = true
+
