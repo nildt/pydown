@@ -4,6 +4,8 @@ import urllib2
 import re #regex
 import os
 import ConfigParser
+import pycurl
+import cStringIO
 from urlparse import urlparse, urlsplit, urljoin
 
 class Command:
@@ -56,20 +58,37 @@ skipped    = 0
 failed     = 0
 	
 #read commands
+curl = pycurl.Curl()
 for cmd in commands:
+	curl.reset()
+	curl.setopt(pycurl.VERBOSE, 0)
+	curl.setopt(pycurl.FOLLOWLOCATION, 1);
 	#setup authentification
-	password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
-	password_mgr.add_password(None, urlparse(cmd.url).netloc, cmd.login, cmd.pssw)
-
-	handler = urllib2.HTTPBasicAuthHandler(password_mgr)
-	opener = urllib2.build_opener(urllib2.HTTPHandler, handler)
+	curl.setopt(pycurl.HTTPAUTH, pycurl.HTTPAUTH_ANY);
+	curl.setopt(pycurl.USERPWD, cmd.login+":"+cmd.pssw);
 
 	#Read res
 	print ""
 	print "Reading '" + cmd.url + "' ...",
-	try:
-		response = opener.open(cmd.url)
-		html = response.read()
+	#try:
+	if 1==1:
+		buf = cStringIO.StringIO()
+		curl.setopt(pycurl.URL, cmd.url)
+		curl.setopt(pycurl.WRITEFUNCTION, buf.write)
+		curl.perform()
+		html = buf.getvalue()
+		
+		#curl.unsetopt(pycurl.WRITEFUNCTION) bug??
+		curl.reset()
+		curl.setopt(pycurl.VERBOSE, 0)
+		curl.setopt(pycurl.FOLLOWLOCATION, 1);
+		#setup authentification
+		curl.setopt(pycurl.HTTPAUTH, pycurl.HTTPAUTH_ANY);
+		curl.setopt(pycurl.USERPWD, cmd.login+":"+cmd.pssw);
+		#curl.setopt(pycurl.NOPROGRESS, 0)
+		
+		
+		buf.close()
 		print "OK"
 		resRead += 1
 
@@ -80,28 +99,33 @@ for cmd in commands:
 			print "Nothing found"
 
 		if not os.path.isdir("./" + cmd.outDir):
-			os.mkdir("./" + cmd.outDir)
+			os.makedirs("./" + cmd.outDir)
 	
 		for match in matches:
 			print "'" + match + "' ...",
 			file_name = cmd.outDir + match.split('/')[-1]
 			if not os.path.exists(file_name):
+				f = None
 				try:
-					data = opener.open(urljoin(cmd.url, match)).read()
 					f = open(file_name, 'wb')
-					f.write(data)
-					f.close()
+					curl.setopt(pycurl.URL, urljoin(cmd.url, match))
+					curl.setopt(pycurl.FILE, f);
+					curl.perform()
 					print "OK"
 					downloaded += 1
 				except:
 					print "failed"
 					failed += 1
+				finally:
+					if not f is None:
+						f.close()
 			else:
 				print "skipped"
 				skipped += 1
 	except:
 		print "failed"
 		resFailed += 1
+curl.close()
 
 
 print "";
