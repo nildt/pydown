@@ -70,8 +70,7 @@ for cmd in commands:
 	#Read res
 	print ""
 	print "Reading '" + cmd.url + "' ...",
-	#try:
-	if 1==1:
+	try:
 		buf = cStringIO.StringIO()
 		curl.setopt(pycurl.URL, cmd.url)
 		curl.setopt(pycurl.WRITEFUNCTION, buf.write)
