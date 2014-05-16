@@ -16,7 +16,35 @@ class Command:
 	outDir = ""
 	login = ""
 	pssw = ""
+	
+def loadHtml(curl, url):
+	buf = cStringIO.StringIO()
+	curl.setopt(pycurl.URL, url)
+	curl.setopt(pycurl.WRITEFUNCTION, buf.write)
+	curl.perform()
+	html = buf.getvalue()
+	buf.close()
+	return html
 
+def findLinks(url, regex, curl):
+	if len(regex) == 0:
+		return []
+	print "loading url'" + url + "'"
+	html = loadHtml(curl, url)
+	print "searching for regex '" + regex[0] + "' :"
+	p = re.compile(regex[0])
+	matches = p.findall(html)
+	
+	links = []
+	
+	if len(regex) == 1:#last regex
+		for match in matches:
+			links.append(urljoin(url, match))
+	else: 
+		for match in matches:
+			site = urljoin(url, match)
+			links.extend(findLinks(site, regex[1:], curl));
+	return links
 
 def getiliaslinks(curl,cookie,cmd,num):
 	if 'download&client' in cmd.url:
@@ -146,6 +174,9 @@ failed     = 0
 
 #read commands
 curl = pycurl.Curl()
+#TEST
+for x in findLinks("http://www.rust-lang.org/", ["http://reddit.com/r/rust", "comments/[a-zA-Z0-9]*/[a-zA-Z0-9_]*"], curl):
+	print x
 for cmd in commands:
 	curl.reset()
 	curl.setopt(pycurl.VERBOSE, 0)
@@ -168,6 +199,7 @@ for cmd in commands:
 		curl.setopt(pycurl.WRITEFUNCTION, buf.write)
 		curl.perform()
 		html = buf.getvalue()
+		buf.close()
 
 		#curl.unsetopt(pycurl.WRITEFUNCTION) bug??
 		curl.reset()
@@ -178,7 +210,6 @@ for cmd in commands:
 		curl.setopt(pycurl.USERPWD, cmd.login+":"+cmd.pssw);
 		#curl.setopt(pycurl.NOPROGRESS, 0)
 
-		buf.close()
 		print "OK"
 		resRead += 1
 
